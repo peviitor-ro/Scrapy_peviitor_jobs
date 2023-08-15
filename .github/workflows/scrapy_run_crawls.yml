@@ -29,6 +29,10 @@ jobs:
           curl -sSL https://install.python-poetry.org | python -
           poetry install
 
+      - name: Synchronize poetry.lock
+        run: |
+          poetry lock --no-update
+
       - name: Run Scrapy Crawlers
         env:
           API_KEY: ${{ secrets.API_KEY }}
