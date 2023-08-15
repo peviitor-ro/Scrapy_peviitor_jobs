@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "scrapy_peviitor_jobs"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 scrapy = "^2.10.0"
 playwright = "^1.36.0"
 scrapy-playwright = "^0.0.28"
