@@ -17,7 +17,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
 
     - name: Install curl
       run: |
@@ -33,6 +37,6 @@ jobs:
       env:
         API_KEY: ${{ secrets.API_KEY }}
       run: |
-        poetry run python3 Scrapy_peviitor_jobs/JobsCrawlerProject/00_main_run_crawlers.py
+        python3 JobsCrawlerProject/00_main_run_crawlers.py
 
 
