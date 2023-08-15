@@ -4,10 +4,8 @@
 name: Scrapy General Point
 
 on:
-  # push:
-  #   branches: [ main ]
   schedule:
-    - cron: '00 17 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,25 +13,26 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
     - name: Install curl
       run: |
         sudo apt-get update
         sudo apt-get install -y curl
 
-    - name: Install poetry
+    - name: Install dependencies with poetry
       run: |
         curl -sSL https://install.python-poetry.org | python -
         poetry install
-
-    - name: Activate Poetry Virtual Environment
-      run: poetry shell
 
     - name: Run Scrapy Crawlers
       env:
         API_KEY: ${{ secrets.API_KEY }}
       run: |
-        python JobsCrawlerProject/00_main_run_crawlers.py
+        poetry run python JobsCrawlerProject/00_main_run_crawlers.py
+
+
