@@ -1,0 +1,44 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Scrapy General Point
+
+on:
+  # push:
+  #   branches: [ main ]
+  schedule:
+    - cron: '00 17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.11
+
+    - name: Install curl
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl
+
+    - name: Install poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python -
+        poetry install
+
+    - name: Activate Poetry Virtual Environment
+      run: poetry shell
+
+    - name: Run Scrapy Crawlers
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+      run: |
+        python JobsCrawlerProject/00_main_run_crawlers.py
