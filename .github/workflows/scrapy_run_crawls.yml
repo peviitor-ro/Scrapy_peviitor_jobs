@@ -23,11 +23,8 @@ jobs:
       - name: Install dependencies with poetry
         run: |
           curl -sSL https://install.python-poetry.org | python -
-          poetry install
-
-      - name: Synchronize poetry.lock
-        run: |
           poetry lock --no-update
+          poetry install
 
       - name: Run Scrapy Crawlers
         env:
