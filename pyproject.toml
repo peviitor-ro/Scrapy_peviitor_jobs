@@ -15,6 +15,7 @@ scrapy-playwright = "^0.0.28"
 uuid = "^1.30"
 bs4 = "^0.0.1"
 lxml = "^4.9.3"
+requests = "^2.31.0"
 
 
 [build-system]
