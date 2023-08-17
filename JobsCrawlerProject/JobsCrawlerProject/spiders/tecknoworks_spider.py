@@ -36,7 +36,7 @@ class TecknoworksSpiderSpider(scrapy.Spider):
 
         # search data with regex
         wmc = re.search(r'wmc=.*?;', str(headers_cookie['set-cookie'])).group(0)
-        cf = re.search(r'__cf_', str(headers_cookie['set-cookie'])).group(0)
+        cf = re.search(r'__cf', str(headers_cookie['set-cookie'])).group(0)
 
         # prepare data row and headers for post requests
         formdata = {
