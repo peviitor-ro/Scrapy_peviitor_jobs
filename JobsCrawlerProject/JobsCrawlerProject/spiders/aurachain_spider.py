@@ -6,7 +6,6 @@
 # Link ----> https://careers.aurachain.ch/
 #
 import scrapy
-from scrapy.http import FormRequest
 from JobsCrawlerProject.items import JobItem
 #
 from bs4 import BeautifulSoup

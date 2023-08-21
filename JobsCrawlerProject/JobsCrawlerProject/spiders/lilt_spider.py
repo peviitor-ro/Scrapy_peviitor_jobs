@@ -53,7 +53,7 @@ class LiltSpiderSpider(scrapy.Spider):
             for job in soup_data:
                 city = job.find('div', attrs={'class': 'ashby-job-posting-brief-details'}).find('p').text.strip()
 
-                if 'romania' in city.lower() or 'emea' in city.lower():
+                if 'romania' in city.lower():
                     item = JobItem()
                     item['id'] = str(uuid.uuid4())
                     item['job_link'] = 'https://jobs.ashbyhq.com' + job['href'].strip()
