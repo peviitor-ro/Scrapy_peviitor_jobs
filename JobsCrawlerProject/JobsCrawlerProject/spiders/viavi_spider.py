@@ -21,13 +21,6 @@ class ViaviSpiderSpider(scrapy.Spider):
     allowed_domains = ["viavisolutions.wd1.myworkdayjobs.com"]
     start_urls = ["https://viavisolutions.wd1.myworkdayjobs.com/careers?locations=992601fe562601082aa1272846780000"]
 
-    custom_settings = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Refer': 'https://google.com',
-        'DNT': '1'
-    }
-
     def start_requests(self):
         yield scrapy.Request(url='https://valeo.wd3.myworkdayjobs.com/en-US/valeo_jobs?locationCountry=f2e609fe92974a55a05fc1cdc2852122',
                              callback=self.parse_headers, method='HEAD')

@@ -21,13 +21,6 @@ class HutchinsonSpiderSpider(scrapy.Spider):
     allowed_domains = ["fa-eocc-saasfaprod1.fa.ocs.oraclecloud.com"]
     start_urls = ["https://fa-eocc-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1007/requisitions?location=Romania&locationId=300000000378617&locationLevel=country&mode=location"]
 
-    custom_settings = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Refer': 'https://google.com',
-        'DNT': '1'
-        }
-
     @classmethod
     async def parse(cls, response):
         async with async_playwright() as p:
