@@ -19,6 +19,7 @@ class EworSpiderSpider(CrawlSpider):
                   "https://join.com/companies/ewor?place%5B0%5D=Bucharest%2C%20Romania",
                   "https://join.com/companies/ewor?place%5B0%5D=Cluj-Napoca%2C%20Romania",
                   "https://join.com/companies/ewor?place%5B0%5D=Constan%C8%9Ba%2C%20Romania",
+                  "https://join.com/companies/ewor?place%5B0%5D=Craiova%2C%20Romania",
                   ]
 
     rules = (
