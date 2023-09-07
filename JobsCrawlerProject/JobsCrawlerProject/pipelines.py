@@ -35,3 +35,5 @@ class UpdateAPIPipeline:
             self.api_updater.update_data(self.lst[0]["company"], self.lst)
             #
             self.api_updater.update_logo(self.lst[0]["company"], self.logo_company)
+
+        # add else for empty list
