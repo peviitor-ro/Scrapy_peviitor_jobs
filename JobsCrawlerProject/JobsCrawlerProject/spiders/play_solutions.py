@@ -13,7 +13,7 @@ import uuid
 
 
 class PlaySolutionsSpider(CrawlSpider):
-    name = "play-solutions"
+    name = "play_solutions"
     allowed_domains = ["play-solutions.ro"]
     start_urls = ["https://play-solutions.ro/cariere/"]
 
