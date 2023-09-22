@@ -45,6 +45,22 @@ class UpdateAPI:
         post_request_to_server = requests.post('https://api.peviitor.ro/v4/update/', headers=post_header, data=json.dumps(data_jobs))
         print(f"{company_name} post -> {post_request_to_server}")
 
+    # only clean data from API
+    def only_clean_data(self, company_name: str) -> None:
+
+        API_KEY = os.environ.get("API_KEY")
+        CLEAN_URL = "https://api.peviitor.ro/v4/clean/"
+
+        print("API_KEY =", API_KEY)
+
+        clean_header = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "apikey": API_KEY
+            }
+
+        clean_request = requests.post(url=CLEAN_URL, headers=clean_header, data={"company": company_name})
+        print(f"{company_name} clean -> {clean_request.status_code}")
+
     # update logo or add logo
     def update_logo(self, id_company: str, logo_link: str):
         '''
@@ -60,4 +76,4 @@ class UpdateAPI:
 
         response = requests.post(url, headers=headers, data=data)
 
-        print(f'Logo update ---> succesfuly {response.text}')
+        print(f'Logo update ---> succesfuly {response}')
