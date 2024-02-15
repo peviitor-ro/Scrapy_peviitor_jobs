@@ -8,7 +8,7 @@
 import scrapy
 from JobsCrawlerProject.items import JobItem
 #
-import uuid
+from JobsCrawlerProject.found_county import get_county
 
 
 class ComplyadvantageSpiderSpider(scrapy.Spider):
@@ -22,17 +22,22 @@ class ComplyadvantageSpiderSpider(scrapy.Spider):
     def parse(self, response):
 
         # data here
-        for job in response.css('div.opening'):
-            city = job.css('span.location::text').get().strip()
+        for job in response.xpath('//div[contains(@class, "opening")]'):
+
+            # get location
+            city = job.xpath('.//span[contains(@class, "location")]/text()').extract_first()
+            #
+            loc_ready = city.split(',')[0]
 
             if 'romania' in city.lower():
                 item = JobItem()
-                item['id'] = str(uuid.uuid4())
-                item['job_link'] = job.css('a::attr(href)').get().strip()
-                item['job_title'] = job.css('a::text').get().strip()
+                item['job_link'] = job.xpath('.//a/@href').extract_first()
+                item['job_title'] = job.xpath('.//a/text()').extract_first()
                 item['company'] = 'ComplyAdvantage'
                 item['country'] = 'Romania'
-                item['city'] = city.split(',')[0]
+                item['county'] = get_county(loc_ready)
+                item['city'] = loc_ready
+                item['remote'] = 'remote'
                 item['logo_company'] = 'https://complyadvantage.com/wp-content/themes/comply/images/logo.svg'
                 #
                 yield item

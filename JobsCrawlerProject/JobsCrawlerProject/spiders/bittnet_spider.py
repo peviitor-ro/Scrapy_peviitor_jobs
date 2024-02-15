@@ -9,10 +9,11 @@ import scrapy
 #
 from JobsCrawlerProject.items import JobItem
 #
-from playwright.async_api import async_playwright
-from bs4 import BeautifulSoup
+from JobsCrawlerProject.found_county import get_county
 #
-import uuid
+from playwright.async_api import async_playwright
+from scrapy.selector import Selector
+#
 import re
 
 
@@ -41,18 +42,22 @@ class BittnetSpiderSpider(scrapy.Spider):
             await browser.close()
 
             # scrape all jobs
-            soup = BeautifulSoup(dynamic_content, 'lxml')
-            soup_data = soup.find_all('div', attrs={'class': 'row-item'})
+            selector = Selector(text=dynamic_content)
 
             # here parse jobs
-            for job in soup_data:
+            for job in selector.xpath('//div[contains(@class, "col-xs-12")]'):
+
+                # get location
+                location = job.xpath('//div[@class="row-item"]/text()').extract_first()
+
                 item = JobItem()
-                item['id'] = str(uuid.uuid4())
-                item['job_link'] = 'https://www.bittnet.jobs' + job.find('a')['href'].strip()
-                item['job_title'] = job.find('a').text.strip()
+                item['job_link'] = "https://www.bittnet.jobs" + job.xpath('//div[@class="row-item"]/a/@href').get()
+                item['job_title'] = job.xpath('//div[@class="row-item"]/a/text()').get()
                 item['company'] = 'Bittnet'
                 item['country'] = 'Romania'
-                item['city'] = re.split(r'(?=[A-Z])', str(job.text.split()[-1]))[-1]
+                item['county'] = get_county(location)
+                item['city'] = location
+                item['remote'] = 'on-site'
                 item['logo_company'] = 'https://www.bittnet.jobs/img/logo_ro.png'
                 #
                 yield item

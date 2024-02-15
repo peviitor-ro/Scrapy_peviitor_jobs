@@ -8,7 +8,7 @@
 import scrapy
 from JobsCrawlerProject.items import JobItem
 #
-import uuid
+from JobsCrawlerProject.found_county import get_county
 #
 import json
 import requests
@@ -68,16 +68,27 @@ class CreativechaosSpiderSpider(scrapy.Spider):
     def parse(self, response):
 
         # parse jobs data!
-        for job in response.json()["results"]:
-            if ((location := job['location']['city']) == ''):
-                location = 'Remote'
+        for job in response.json().get("results"):
+            if ((location := job.get('location').get('city')) == ''):
+                location = ''
+            
+            # check for remote positions
+            job_type = None
+            if location == '': 
+                job_type = 'remote'
+
+            # county for check
+            county_of_job = get_county(location)
+
+            # get items
             item = JobItem()
-            item['id'] = str(uuid.uuid4())
-            item['job_link'] = f'https://apply.workable.com/creativechaos/j/{job["shortcode"]}/'
-            item['job_title'] = job['title']
+            item['job_link'] = f'https://apply.workable.com/creativechaos/j/{job.get("shortcode")}/'
+            item['job_title'] = job.get('title')
             item['company'] = 'CreativeChaos'
             item['country'] = 'Romania'
+            item['county'] = county_of_job if get_county(location) != None else ''
             item['city'] = location
+            item['remote'] = 'remote' if job_type != None else 'on-site'
             item['logo_company'] = 'https://workablehr.s3.amazonaws.com/uploads/account/logo/496284/logo'
 
             yield item

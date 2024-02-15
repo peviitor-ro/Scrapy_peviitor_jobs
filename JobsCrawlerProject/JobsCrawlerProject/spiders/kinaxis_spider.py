@@ -8,7 +8,7 @@
 import scrapy
 from JobsCrawlerProject.items import JobItem
 #
-import uuid
+from JobsCrawlerProject.found_county import counties, get_county
 
 
 class KinaxisSpiderSpider(scrapy.Spider):
@@ -22,20 +22,33 @@ class KinaxisSpiderSpider(scrapy.Spider):
     def parse(self, response):
 
         # data here
-        for job in response.css('div.opening'):
+        for job in response.xpath('//div[@class="opening"]'):
 
             # get location
-            city = job.css('span.location::text').get().strip()
+            city = job.xpath('.//span[@class="location"]/text()').extract()[0].lower().split(',')
 
             # check for Romania location
-            if 'romania' in city.lower():
+            if 'romania' in [element.strip() for element in city]:
+
+                # get location from county
+                location = ''
+                for city_and_counties in counties:
+                    for key, value in city_and_counties.items():
+                        if key == city[0].title():
+                            for new_city in value:
+                                if city[0].title().strip() in new_city:
+                                    location = new_city
+                if location == '':
+                    location = city[0].title()
+
                 item = JobItem()
-                item['id'] = str(uuid.uuid4())
-                item['job_link'] = 'https://boards.greenhouse.io' + job.css('a::attr(href)').get().strip()
-                item['job_title'] = job.css('a::text').get().strip()
+                item['job_link'] = 'https://boards.greenhouse.io' + job.xpath('.//a/@href').extract_first()
+                item['job_title'] = job.xpath('.//a/text()').extract_first()
                 item['company'] = 'Kinaxis'
                 item['country'] = 'Romania'
-                item['city'] = city.split(',')[0]
+                item['county'] = get_county(location)
+                item['city'] = location
+                item['remote'] = 'remote'
                 item['logo_company'] = 'https://www.kinaxis.com/themes/custom/kinaxis/logo.png'
                 #
                 yield item

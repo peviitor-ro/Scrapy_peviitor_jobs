@@ -15,15 +15,16 @@ class UpdateAPIPipeline:
 
     def process_item(self, item, spider):
         data = {
-            "id": item.get("id"),
-            "job_title": item["job_title"],
-            "job_link": item["job_link"],
-            "country": item["country"],
-            "company": item["company"],
-            "city": item["city"],
+            "job_title": item.get("job_title"),
+            "job_link": item.get("job_link"],
+            "country": item.get("country"),
+            "county": item.get('county'),
+            "company": item.get("company"),
+            "city": item.get("city"),
+            "remote": item.get('remote')
             }
-
-        self.logo_company = item['logo_company']
+        
+        self.logo_company = item.get('logo_company')
         #
         self.lst.append(data)
 

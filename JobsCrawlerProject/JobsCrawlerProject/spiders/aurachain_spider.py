@@ -8,9 +8,10 @@
 import scrapy
 from JobsCrawlerProject.items import JobItem
 #
-from bs4 import BeautifulSoup
+from scrapy.selector import Selector
 #
-import uuid
+from JobsCrawlerProject.found_county import get_county
+#
 import json
 
 
@@ -34,6 +35,7 @@ class AurachainSpiderSpider(scrapy.Spider):
                 'show_pagination': 'false',
                 'form_data': 'search_keywords=&search_location=&search_region=0&filter_job_type%5B%5D=contract-based&filter_job_type%5B%5D=freelance&filter_job_type%5B%5D=full-time&filter_job_type%5B%5D=internship&filter_job_type%5B%5D=part-time&filter_job_type%5B%5D=temporary&filter_job_type%5B%5D='
             }
+        
         headers = {
             'authority': 'careers.aurachain.ch',
             'accept': '*/*',
@@ -59,24 +61,29 @@ class AurachainSpiderSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        # make soup object for html from json
-        soup = BeautifulSoup(response.json()['html'], 'lxml')
-        soup_data = soup.find_all('li', attrs={'class': 'job_listing'})
+        html_from_json_data = json.loads(response.text).get('html')
+        
+        # convert str to ScrapyObject
+        selector = Selector(text=html_from_json_data)
 
-        for job in soup_data:
+        for link in selector.xpath('//a[contains(@href, "/job/")]/@href').extract():
+            yield scrapy.Request(link, callback=self.parse_individal_page)
 
-            city = job.find('div', attrs={'class': 'location'}).text.strip()
+    # individual page
+    def parse_individal_page(slef, response):
 
-            # check for location
-            if 'romania' in city.lower():
+        if (location := response.xpath("//li[contains(@class, 'location')]/span[contains(@class, 'value')]/text()").extract_first().split(',')[0].lower()) == 'bucharest':
+            location = 'Bucuresti'
 
-                item = JobItem()
-                item['id'] = str(uuid.uuid4())
-                item['job_link'] = job.find('a')['href']
-                item['job_title'] = job.find('h3').text
-                item['company'] = 'Aurachain'
-                item['country'] = 'Romania'
-                item['city'] = city.split(',')[0].strip()
-                item['logo_company'] = 'https://aurachain.ch/wp-content/uploads/2022/12/Aurachain-logo_svg-06.svg'
+        item = JobItem()
+        item['job_link'] = response.url
+        item['job_title'] = response.xpath("//div[contains(@class, 'heading')]/h2[contains(@class, 'title')]/text()").extract_first()
+        item['company'] = 'Aurachain'
+        item['country'] = 'Romania'
+        item['county'] = get_county(location.title())
+        item['city'] = location.title()
+        item['remote'] = 'on-site'
+        item['logo_company'] = 'https://careers.aurachain.ch/wp-content/uploads/2020/02/cropped-Aurachain-logo_v2.1-curent-Worksheet_Aurachain-logo3-e1564479066855.png'
+        #
+        yield item
 
-                yield item

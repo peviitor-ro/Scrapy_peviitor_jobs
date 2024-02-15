@@ -38,10 +38,10 @@ CONCURRENT_REQUESTS_PER_IP = 2
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept-Language': 'en-US,en;q=0.5',
     'Refer': 'https://google.com',
-    'DNT': '1',
+    'DNT': '1'
 }
 
 # Enable or disable spider middlewares
@@ -65,7 +65,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 200,
+#  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

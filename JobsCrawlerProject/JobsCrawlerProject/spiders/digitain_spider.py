@@ -3,12 +3,12 @@
 #
 #
 # Company -> Digitain
-# Link ----> https://corporate.e-jumbo.gr/ro/job-opportunities/theseis-ergasias/
+# Link ----> 
 #
 import scrapy
 from JobsCrawlerProject.items import JobItem
+from JobsCrawlerProject.found_county import get_county
 #
-import uuid
 import json
 #
 import requests
@@ -69,16 +69,20 @@ class DigitainSpiderSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        for job in response.json()['result']:
+        for job in response.json().get('result'):
 
-            if (city := job['location']['city'].lower().strip()) in ['bucharest', 'bucuresti']:
+            if str((location := job.get('location').get('city'))).lower() == 'bucharest':
+                print(str(job.get('isRemote')))
+                location = 'Bucuresti'
+            
+                # parse items here
                 item = JobItem()
-                item['id'] = str(uuid.uuid4())
-                item['job_link'] = 'https://digitainsoftware.bamboohr.com/careers/' + job['id']
-                item['job_title'] = job['jobOpeningName']
+                item['job_link'] = f'https://digitainsoftware.bamboohr.com/careers/{job.get("id")}'
+                item['job_title'] = job.get('jobOpeningName')
                 item['company'] = 'Digitain'
                 item['country'] = 'Romania'
-                item['city'] = city.title()
-                item['logo_company'] = 'https://www.digitain.com/wp-content/themes/digitain_wp_theme/assets/img/digitain_logo.png'
-
+                item['county'] = get_county(location.title())
+                item['city'] = location.title()
+                item['remote'] = 'remote' if job.get('isRemote') != None else 'on-site'
+                item['logo_company'] = 'https://cristim.ro/wp-content/uploads/2023/07/cropped-logo-pe-servet-600x600px_crop.jpg'
                 yield item
