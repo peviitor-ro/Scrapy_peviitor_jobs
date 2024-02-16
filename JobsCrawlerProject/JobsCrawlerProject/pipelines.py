@@ -16,7 +16,7 @@ class UpdateAPIPipeline:
     def process_item(self, item, spider):
         data = {
             "job_title": item.get("job_title"),
-            "job_link": item.get("job_link"],
+            "job_link": item.get("job_link"),
             "country": item.get("country"),
             "county": item.get('county'),
             "company": item.get("company"),
