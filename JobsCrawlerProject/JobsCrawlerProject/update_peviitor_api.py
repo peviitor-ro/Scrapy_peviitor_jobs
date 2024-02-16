@@ -33,7 +33,6 @@ class UpdateAPI:
 
         # clean data
         clean_request = requests.post(CLEAN_URL, headers=clean_header, data={'company': company_name})
-        print(f"{company_name} clean -> {clean_request.status_code}")
 
         # post headers
         post_header = {
@@ -51,7 +50,7 @@ class UpdateAPI:
         requests.post(dataset_url, json=data)
         # ########################################################
 
-        print(f"{company_name} post -> {post_request_to_server}")
+        print(json.dumps(data_jobs, indent=4))
 
     # only clean data from API
     def only_clean_data(self, company_name: str) -> None:
@@ -59,15 +58,12 @@ class UpdateAPI:
         API_KEY = os.environ.get("API_KEY")
         CLEAN_URL = "https://api.peviitor.ro/v4/clean/"
 
-        print("API_KEY =", API_KEY)
-
         clean_header = {
             "Content-Type": "application/x-www-form-urlencoded",
             "apikey": API_KEY
             }
 
         clean_request = requests.post(url=CLEAN_URL, headers=clean_header, data={"company": company_name})
-        print(f"{company_name} clean -> {clean_request.status_code}")
 
     # update logo or add logo
     def update_logo(self, id_company: str, logo_link: str):
@@ -83,5 +79,3 @@ class UpdateAPI:
         data = json.dumps([{"id": id_company, "logo": logo_link}])
 
         response = requests.post(url, headers=headers, data=data)
-
-        print(f'Logo update ---> succesfuly {response}')
