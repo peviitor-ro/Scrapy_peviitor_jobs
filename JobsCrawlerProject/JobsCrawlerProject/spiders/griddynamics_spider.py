@@ -8,11 +8,14 @@
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from JobsCrawlerProject.items import JobItem
-#
 from JobsCrawlerProject.found_county import get_county
 
 
 class GriddynamicsSpiderSpider(CrawlSpider):
+    '''
+        Spider for Gryddynamic Company
+    '''
+
     name = "griddynamics_spider"
     allowed_domains = ["careers.griddynamics.com"]
     start_urls = ["https://careers.griddynamics.com/discover-openings?location=Bucharest,%20Romania"]
@@ -23,6 +26,9 @@ class GriddynamicsSpiderSpider(CrawlSpider):
             )
 
     def parse_job(self, response):
+        '''
+        ... parse metod for rules. Extract all data from griddynamics company
+        '''
 
         # get location
         location = response.xpath('//div[@class="ng-star-inserted"]//text()').extract_first().strip()
