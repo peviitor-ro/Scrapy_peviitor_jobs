@@ -72,7 +72,6 @@ class HeimdalSpiderSpider(scrapy.Spider):
                 job_type = 'remote'
 
             if new_loc:
-                print(location)
                 item = JobItem()
                 item['job_link'] = f"https://heimdalsecurity.bamboohr.com/careers/{job.get('id')}"
                 item['job_title'] = job.get('jobOpeningName')
