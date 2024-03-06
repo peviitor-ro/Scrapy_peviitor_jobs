@@ -30,24 +30,18 @@ class KinaxisSpiderSpider(scrapy.Spider):
             # check for Romania location
             if 'romania' in [element.strip() for element in city]:
 
-                # get location from county
-                location = ''
-                for city_and_counties in counties:
-                    for key, value in city_and_counties.items():
-                        if key == city[0].title():
-                            for new_city in value:
-                                if city[0].title().strip() in new_city:
-                                    location = new_city
-                if location == '':
-                    location = city[0].title()
+                location = city[0].title()
+                location_finish = get_county(location=location)
 
                 item = JobItem()
                 item['job_link'] = 'https://boards.greenhouse.io' + job.xpath('.//a/@href').extract_first()
                 item['job_title'] = job.xpath('.//a/text()').extract_first()
                 item['company'] = 'Kinaxis'
                 item['country'] = 'Romania'
-                item['county'] = get_county(location)
-                item['city'] = location
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                    and True in location_finish and 'bucuresti' != location.lower()\
+                                        else location
                 item['remote'] = 'remote'
                 item['logo_company'] = 'https://www.kinaxis.com/themes/custom/kinaxis/logo.png'
                 #

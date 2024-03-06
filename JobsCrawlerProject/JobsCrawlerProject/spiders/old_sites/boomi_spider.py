@@ -29,6 +29,8 @@ class BoomiSpiderSpider(scrapy.Spider):
                 # find job location and verify if it available
                 job_location = level_2_job.get('location').get('name')
                 if job_location and "romania" == job_location.lower():
+
+                    print(job_location)
                     #
                     item = JobItem()
                     item['job_link'] = level_2_job['absolute_url']

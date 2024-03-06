@@ -72,8 +72,9 @@ class DigitainSpiderSpider(scrapy.Spider):
         for job in response.json().get('result'):
 
             if str((location := job.get('location').get('city'))).lower() == 'bucharest':
-                print(str(job.get('isRemote')))
                 location = 'Bucuresti'
+
+                location_finish = get_county(location=location.title())
             
                 # parse items here
                 item = JobItem()
@@ -81,8 +82,10 @@ class DigitainSpiderSpider(scrapy.Spider):
                 item['job_title'] = job.get('jobOpeningName')
                 item['company'] = 'Digitain'
                 item['country'] = 'Romania'
-                item['county'] = get_county(location.title())
-                item['city'] = location.title()
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                    and True in location_finish and 'bucuresti' != location.lower()\
+                                        else location
                 item['remote'] = 'remote' if job.get('isRemote') != None else 'on-site'
                 item['logo_company'] = 'https://cristim.ro/wp-content/uploads/2023/07/cropped-logo-pe-servet-600x600px_crop.jpg'
                 yield item

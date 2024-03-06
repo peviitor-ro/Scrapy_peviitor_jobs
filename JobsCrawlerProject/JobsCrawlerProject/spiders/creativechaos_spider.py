@@ -78,7 +78,7 @@ class CreativechaosSpiderSpider(scrapy.Spider):
                 job_type = 'remote'
 
             # county for check
-            county_of_job = get_county(location)
+            location_finish = get_county(location=location)
 
             # get items
             item = JobItem()
@@ -86,8 +86,10 @@ class CreativechaosSpiderSpider(scrapy.Spider):
             item['job_title'] = job.get('title')
             item['company'] = 'CreativeChaos'
             item['country'] = 'Romania'
-            item['county'] = county_of_job if get_county(location) != None else ''
-            item['city'] = location
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                            and True in location_finish and 'bucuresti' != location.lower()\
+                                else location
             item['remote'] = 'remote' if job_type != None else 'on-site'
             item['logo_company'] = 'https://workablehr.s3.amazonaws.com/uploads/account/logo/496284/logo'
 

@@ -25,15 +25,19 @@ class DingSpiderSpider(scrapy.Spider):
 
             location = job.get('location').get('city')
 
-            if location.lower() in ['bucharest',]:
-                item = JobItem()
-                item['job_link'] = 'https://ding.bamboohr.com/careers/' + job['id']
-                item['job_title'] = job['jobOpeningName']
-                item['company'] = 'Ding'
-                item['country'] = 'Romania'
-                item['county'] = get_county(location)
-                item['city'] = location
-                item['remote'] = 'remote' if job.get('isRemote') != None else 'on-site'
-                item['logo_company'] = 'https://upload.wikimedia.org/wikipedia/commons/2/23/Ding_logo.png'
-                #
-                yield item
+            if location != None:
+                if location.lower() in ['bucharest',]:
+                    location_finish = get_county(location=location)
+                    item = JobItem()
+                    item['job_link'] = 'https://ding.bamboohr.com/careers/' + job['id']
+                    item['job_title'] = job['jobOpeningName']
+                    item['company'] = 'Ding'
+                    item['country'] = 'Romania'
+                    item['county'] = location_finish[0] if True in location_finish else None
+                    item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                        and True in location_finish and 'bucuresti' != location.lower()\
+                                            else location
+                    item['remote'] = 'remote' if job.get('isRemote') != None else 'on-site'
+                    item['logo_company'] = 'https://upload.wikimedia.org/wikipedia/commons/2/23/Ding_logo.png'
+                    #
+                    yield item

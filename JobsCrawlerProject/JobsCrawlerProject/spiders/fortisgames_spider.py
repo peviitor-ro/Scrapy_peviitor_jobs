@@ -68,15 +68,20 @@ class FortisgamesSpiderSpider(scrapy.Spider):
 
         for ddict in lst_with_data:
 
-            loca = ddict.get('city').lower()
+            if (location := ddict.get('city').lower()) and ('remote' in location or 'hybrid' in location):
+                location = ''
+
+            location_finish = get_county(location=location)
             
             item = JobItem()
             item['job_link'] = ddict.get('job_link')
             item['job_title'] = ddict.get('job_title')
             item['company'] = ddict.get('company')
             item['country'] = ddict.get('country')
-            item['county'] = '' if 'remote' in loca else get_county(loca.split('-')[0].title())
-            item['city'] = '' if 'remote' in loca else loca.split('-')[0].title()
-            item['remote'] = 'remote' if 'remote' in loca else 'on-site'
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != location.lower()\
+                                    else location
+            item['remote'] = 'on-site' if location.strip() else 'remote'
             item['logo_company'] = 'https://media.pocketgamer.biz/2022/3/115185/fortis-r225x225.jpg'
             yield item

@@ -33,14 +33,18 @@ class EdgelessSpiderSpider(scrapy.Spider):
         if (location := response.xpath('//li//span/text()').extract()[-2].lower()) == 'bucharest':
             location = 'Bucuresti'
 
+        location_finish = get_county(location=location)
+
         # parse data and send it to pipelines.py
         item = JobItem()
         item['job_link'] = response.url
         item['job_title'] = response.xpath('//h1[contains(@class, "elementor-heading-title")]/text()').extract()[-1]
         item['company'] = 'EdgeLess'
         item['country'] = 'Romania'
-        item['county'] = get_county(location.title())
-        item['city'] = location.title()
+        item['county'] = location_finish[0] if True in location_finish else None
+        item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                            and True in location_finish and 'bucuresti' != location.lower()\
+                                else location
         item['remote'] = 'on-site'
         item['logo_company'] = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXKx4pqVnhEvKxETB_rWvem5yJpmEv_jkNaM2eGHsK0w&s'
         #

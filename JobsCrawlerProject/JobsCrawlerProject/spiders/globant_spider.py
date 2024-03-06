@@ -25,34 +25,40 @@ class GlobantSpiderSpider(CrawlSpider):
     def parse_job(self, response):
 
         # get location
-        location = response.xpath('//span[@class="jobGeoLocation"]/text()').extract()[0].strip().split(',')
-        #
-        search_elements = [element.lower().strip() for element in location]
-        
-        # get exact location
-        if (exact_location := location[0].strip()).lower() == "other city":
-            exact_location == 'All'
-        else:
-            exact_location = location[0].strip()
+        if bool(location := response.xpath('//span[@class="jobGeoLocation"]/text()').extract()):
 
-        # get job type
-        job_type = ''
-        if 'hybrid' in search_elements:
-            job_type = 'hybrid'
-        elif 'remote' in search_elements:
-            job_type = 'remote'
+            search_elements = [element.strip().lower() for element in location[0].split(',')]
 
-        # get data
-        if 'ro' in search_elements:
-            #
-            # parse data here
-            item = JobItem()
-            item['job_link'] = response.url
-            item['job_title'] = response.xpath('//h1[@id="job-title"]/text()').extract_first()
-            item['company'] = 'Globant'
-            item['country'] = 'Romania'
-            item['county'] = "All" if get_county(exact_location) == None else get_county(location[0].strip())
-            item['city'] = 'All' if exact_location.lower() == "other city" else location[0].strip()
-            item['remote'] = job_type
-            item['logo_company'] = 'https://www.globant.com/themes/custom/globant_corp_theme/images/2019/globant-logo-dark.svg'
-            yield item
+            # get exact location
+            if (exact_location := search_elements[0].strip().lower()) == "other city":
+                exact_location = 'all'
+            else:
+                exact_location = search_elements[0]
+
+            # get job type
+            job_type = ''
+            if 'hybrid' in location[0].lower():
+                job_type = 'hybrid'
+            elif 'remote' in location[0].lower():
+                job_type = 'remote'
+            else:
+                job_type = 'on-site'
+
+            # get data
+            if 'ro' in search_elements:
+
+                location_finish  = get_county(location=exact_location)
+                #
+                # parse data here
+                item = JobItem()
+                item['job_link'] = response.url
+                item['job_title'] = response.xpath('//h1[@id="job-title"]/text()').extract_first()
+                item['company'] = 'Globant'
+                item['country'] = 'Romania'
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if exact_location.lower() == location_finish[0].lower()\
+                                    and True in location_finish and 'bucuresti' != exact_location.lower()\
+                                        else exact_location.title()
+                item['remote'] = job_type
+                item['logo_company'] = 'https://www.globant.com/themes/custom/globant_corp_theme/images/2019/globant-logo-dark.svg'
+                yield item

@@ -16,7 +16,8 @@ class AmachSpiderSpider(scrapy.Spider):
     start_urls = ["https://boards.eu.greenhouse.io/embed/job_board/?for=amach"]
 
     def start_requests(self):
-        yield scrapy.Request(self.start_urls[0])
+        request = scrapy.Request(self.start_urls[0])
+        yield request
 
     def parse(self, response):
         # data here
@@ -25,17 +26,23 @@ class AmachSpiderSpider(scrapy.Spider):
             
             # check city
             if 'romania' in city_tag.lower():
-                new_city = city_tag.split(',')[0].strip()
-                if new_city.lower() == 'bucharest':
-                    new_city = 'Bucuresti'
+                location = city_tag.split(',')[0].strip()
+                if location.lower() == 'bucharest':
+                    location = 'Bucuresti'
+
+                # get location
+                location_finish = get_county(location=location)
+
                 #
                 item =JobItem()
                 item['job_link'] = job.xpath('.//a/@href').get()
                 item['job_title'] = job.xpath('.//a/text()').get()
                 item['company'] = 'AMACH'
                 item['country'] = 'Romania'
-                item['county'] = get_county(new_city)
-                item['city'] = new_city
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                            and True in location_finish and 'bucuresti' != location.lower()\
+                                else location
                 item['remote'] = 'on-site'
                 item['logo_company'] = 'https://s101-recruiting.cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/114/210/resized/AMACH-5_Color_Logo_1.png?1675863445'
                 #

@@ -71,14 +71,20 @@ class HeimdalSpiderSpider(scrapy.Spider):
             else:
                 job_type = 'remote'
 
+            location_finish = get_county(location=new_loc)
+
             if new_loc:
                 item = JobItem()
                 item['job_link'] = f"https://heimdalsecurity.bamboohr.com/careers/{job.get('id')}"
                 item['job_title'] = job.get('jobOpeningName')
                 item['company'] = 'Heimdal'
                 item['country'] = 'Romania'
-                item['county'] = 'All' if location == None else get_county(new_loc)
-                item['city'] = new_loc
+                item['county'] = (
+                    'all' if 'all' in location_finish else
+                    location_finish[0] if True in location_finish and isinstance(location_finish[0], str) else
+                    None
+                )
+                item['city'] = 'all' if new_loc.lower() == 'all' else new_loc.title()
                 item['remote'] = job_type
                 item['logo_company'] = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiqqnZZ_xYO6q0r0l83olu79c9-_SFKI66j-mRym_B&s'
                 #

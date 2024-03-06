@@ -32,7 +32,6 @@ class HutchinsonSpiderSpider(scrapy.Spider):
                                      for value in values] for key, values\
                                         in response.headers.items()}):
             
-
             for key, value in response_headers.items():
                 for data in value:
                     for fresh_cookie in data.split():
@@ -67,13 +66,17 @@ class HutchinsonSpiderSpider(scrapy.Spider):
             if (location := job.get('PrimaryLocation').split(',')[0].lower()) == 'romania':
                 location = 'all'
 
+            location_finish = get_county(location=location)
+
             item = JobItem()
             item['job_link'] = f"https://fa-eocc-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1007/job/{job.get('Id')}/?location=Romania&locationId=300000000378617&locationLevel=country&mode=location"
             item['job_title'] = job.get('Title')
             item['company'] = 'Hutchinson'
             item['country'] = 'Romania'
-            item['county'] = 'all' if location == 'all' else get_county(location.title())
-            item['city'] = location if location == 'all' else location.title()
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != location.lower()\
+                                    else location
             item['remote'] = 'on-site'
             item['logo_company'] = 'https://cdn.worldvectorlogo.com/logos/hutchinson-logo.svg'
             #

@@ -47,13 +47,17 @@ class EworSpiderSpider(scrapy.Spider):
             if (location := job.get('city').get('cityName')).lower() == 'bucharest':
                 location = 'Bucuresti'
 
+            location_finish = get_county(location=location)
+
             item = JobItem()
             item['job_link'] = "https://join.com/companies/ewor/" + job.get('idParam')
             item['job_title'] = job.get('title')
             item['company'] = 'EWOR'
             item['country'] = 'Romania'
-            item['county'] = get_county(location.title())
-            item['city'] = location
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != location.lower()\
+                                    else location
             item['remote'] = job.get('workplaceType').title()
             item['logo_company'] = 'https://cdn.join.com/61157a98f4fbb7000885977f/ewor-gmb-h-logo-xl.png'
             #

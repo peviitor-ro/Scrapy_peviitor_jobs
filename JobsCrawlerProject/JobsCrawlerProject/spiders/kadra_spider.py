@@ -27,31 +27,23 @@ class KadraSpiderSpider(scrapy.Spider):
 
             # algorithm for location
             title_location = job.xpath('.//p/text()')[0].extract()
-
-            # get all cities
-            cities_from_titles = set()
-            counties_from_titles = set()
+                        
+            # search by location name
+            location = None
             for county_and_city in counties:
                 for key, value in county_and_city.items():
+
+                    # append county to value: list! with locations
+                    value.append(key)
                     for city in value:
                         city = remove_diacritics(city)
-                        loc_diac = remove_diacritics(title_location)
+                        location_remove_diacritics = remove_diacritics(title_location)
 
-                        # if in loc_diac not diacritics
-                        if re.search(r'\b{}\b'.format(re.escape(city.split()[-1].lower())), loc_diac.lower()):
-                            cities_from_titles.add(city)
-                            counties_from_titles.add(key)
+                        # specific city from found_county - counties
+                        if re.search(r'\b{}\b'.format(re.escape(city.split()[-1].lower())), location_remove_diacritics.lower()):
+                            location = city
 
-                # on one job, we have only county - Cluj. I made a Search by key in values
-                else:
-                    if len(cities_from_titles) == 0:
-                        for keys, values in county_and_city.items():
-                            if re.search(r'\b{}\b'.format(re.escape(keys.split()[-1].lower())), remove_diacritics(title_location).lower()):
-                                for new_c in values:
-                                    if keys in new_c:
-                                        cities_from_titles.add(new_c)
-                                        counties_from_titles.add(keys)
-                        
+            location_finish = get_county(location=location)
 
 
             item = JobItem()
@@ -60,8 +52,10 @@ class KadraSpiderSpider(scrapy.Spider):
             item['job_title'] = title_location
             item['company'] = 'Kadra'
             item['country'] = 'Romania'
-            item['county'] = list(counties_from_titles)[0] if 0 < len(counties_from_titles) < 2 else list(counties_from_titles)
-            item['city'] = list(cities_from_titles)[0] if 0 < len(cities_from_titles) < 2 else list(cities_from_titles)
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != location.lower()\
+                                    else location
             item['remote'] = 'on-site'
             item['logo_company'] = 'https://kadra.ro/wp-content/uploads/2018/11/logo-Kadra-wide-500.png'
             #

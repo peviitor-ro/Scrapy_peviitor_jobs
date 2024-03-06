@@ -50,6 +50,8 @@ class BittnetSpiderSpider(scrapy.Spider):
                 # get location
                 location = job.xpath('//div[@class="row-item"]/text()').extract_first()
 
+                location_finish = get_county(location=location)
+
                 item = JobItem()
                 item['job_link'] = "https://www.bittnet.jobs" + job.xpath('//div[@class="row-item"]/a/@href').get()
                 item['job_title'] = job.xpath('//div[@class="row-item"]/a/text()').get()

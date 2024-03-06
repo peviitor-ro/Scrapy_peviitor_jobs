@@ -37,14 +37,18 @@ class GriddynamicsSpiderSpider(CrawlSpider):
 
         # get data
         if 'romania' in location.lower():
+
+            location_finish = get_county(location=correct_location)
             #
             item = JobItem()
             item['job_link'] = response.url
             item['job_title'] = response.xpath('//h1[contains(@class, "title-label")]/text()').extract_first().strip()
             item['company'] = 'GridDynamics'
             item['country'] = 'Romania'
-            item['county'] = get_county(correct_location.title())
-            item['city'] = correct_location.title()
+            item['county'] = location_finish[0] if True in location_finish else None
+            item['city'] = 'all' if correct_location.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != correct_location.lower()\
+                                    else correct_location.title()
             item['remote'] = 'on-site'
             item['logo_company'] = 'https://itkonekt.com/media/2019/02/2019-02-26.png'
             #

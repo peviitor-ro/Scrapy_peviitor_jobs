@@ -94,10 +94,29 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-# PlayWright
-DOWNLOAD_HANDLERS = {
-    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+# for finger print
+DUPEFILTER_CLASS = 'scrapy.dupefilters.RFPDupeFilter'
+#DUPEFILTER_DEBUG = True  # Optional for debugging
+
+# Splash Server Endpoint
+SPLASH_URL = 'http://localhost:8050'
+
+
+# Enable Splash downloader middleware and change HttpCompressionMiddleware priority
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+# Enable Splash Deduplicate Args Filter
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
+
+# Define the Splash DupeFilter
+#DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+# USE it in splash spider
+# def start_requests(self):
+#     url = 'http://example.com'
+#     yield scrapy.Request(url, self.parse, meta={'splash': {'args': {'dupefilter_class': 'scrapy_splash.SplashAwareDupeFilter'}}})

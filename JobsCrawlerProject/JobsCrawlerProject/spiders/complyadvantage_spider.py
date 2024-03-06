@@ -30,13 +30,18 @@ class ComplyadvantageSpiderSpider(scrapy.Spider):
             loc_ready = city.split(',')[0]
 
             if 'romania' in city.lower():
+
+                location_finish = get_county(location=loc_ready)
+
                 item = JobItem()
                 item['job_link'] = job.xpath('.//a/@href').extract_first()
                 item['job_title'] = job.xpath('.//a/text()').extract_first()
                 item['company'] = 'ComplyAdvantage'
                 item['country'] = 'Romania'
-                item['county'] = get_county(loc_ready)
-                item['city'] = loc_ready
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if loc_ready.lower() == location_finish[0].lower()\
+                                and True in location_finish and 'bucuresti' != loc_ready.lower()\
+                                    else loc_ready
                 item['remote'] = 'remote'
                 item['logo_company'] = 'https://complyadvantage.com/wp-content/themes/comply/images/logo.svg'
                 #

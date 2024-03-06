@@ -75,13 +75,17 @@ class AurachainSpiderSpider(scrapy.Spider):
         if (location := response.xpath("//li[contains(@class, 'location')]/span[contains(@class, 'value')]/text()").extract_first().split(',')[0].lower()) == 'bucharest':
             location = 'Bucuresti'
 
+        location_finish = get_county(location=location)
+
         item = JobItem()
         item['job_link'] = response.url
         item['job_title'] = response.xpath("//div[contains(@class, 'heading')]/h2[contains(@class, 'title')]/text()").extract_first()
         item['company'] = 'Aurachain'
         item['country'] = 'Romania'
-        item['county'] = get_county(location.title())
-        item['city'] = location.title()
+        item['county'] = location_finish[0] if True in location_finish else None
+        item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                            and True in location_finish and 'bucuresti' != location.lower()\
+                                else location
         item['remote'] = 'on-site'
         item['logo_company'] = 'https://careers.aurachain.ch/wp-content/uploads/2020/02/cropped-Aurachain-logo_v2.1-curent-Worksheet_Aurachain-logo3-e1564479066855.png'
         #
