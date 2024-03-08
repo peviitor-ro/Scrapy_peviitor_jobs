@@ -65,7 +65,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 200,
+#  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -97,26 +97,9 @@ FEED_EXPORT_ENCODING = "utf-8"
 # for finger print
 DUPEFILTER_CLASS = 'scrapy.dupefilters.RFPDupeFilter'
 #DUPEFILTER_DEBUG = True  # Optional for debugging
-
-# Splash Server Endpoint
-SPLASH_URL = 'http://localhost:8050'
-
-
-# Enable Splash downloader middleware and change HttpCompressionMiddleware priority
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+  
+# for firefox 
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
 }
-
-# Enable Splash Deduplicate Args Filter
-SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-}
-
-# Define the Splash DupeFilter
-#DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
-# USE it in splash spider
-# def start_requests(self):
-#     url = 'http://example.com'
-#     yield scrapy.Request(url, self.parse, meta={'splash': {'args': {'dupefilter_class': 'scrapy_splash.SplashAwareDupeFilter'}}})
