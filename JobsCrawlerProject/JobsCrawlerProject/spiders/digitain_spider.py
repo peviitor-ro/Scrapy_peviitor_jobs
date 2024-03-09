@@ -87,5 +87,5 @@ class DigitainSpiderSpider(scrapy.Spider):
                                     and True in location_finish and 'bucuresti' != location.lower()\
                                         else location
                 item['remote'] = 'remote' if job.get('isRemote') != None else 'on-site'
-                item['logo_company'] = 'https://cristim.ro/wp-content/uploads/2023/07/cropped-logo-pe-servet-600x600px_crop.jpg'
+                item['logo_company'] = 'https://www.digitain.com/wp-content/themes/digitain_wp_theme/assets/img/digitain_logo.png'
                 yield item
