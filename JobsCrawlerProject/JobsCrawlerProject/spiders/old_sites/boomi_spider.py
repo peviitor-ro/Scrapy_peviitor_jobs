@@ -1,12 +1,6 @@
 #
 #
 #
-#
-#
-#
-#
-#
-#
 # Company -> Boomi
 # Link ----> https://boomi.com/company/careers/
 #
