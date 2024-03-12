@@ -20,17 +20,22 @@ class RowebSpiderSpider(scrapy.Spider):
         yield scrapy.Request(self.start_urls[0])
 
     def parse(self, response):
-        for job in response.css('div.cards-wrapper > div.card'):
-            link = job.css('a.sg-jobs-card-button::attr(href)').get()
+        for job in response.xpath('//div[@class="content-wrapper"]'):
 
-            if link:
+            if (link := job.xpath('.//a[@class="sg-jobs-card-button"]/@href').extract_first()):
+
+                location = job.xpath('.//p/text()').extract()
+                if 'remote' in location[0].lower() and 'or' in location[0].lower():
+                    location = location[0].split('or')[0].strip().split(',')
+
                 item = JobItem()
-                item['id'] = str(uuid.uuid4())
                 item['job_link'] = 'https://www.roweb.ro/' + link
-                item['job_title'] = job.css('div.content-wrapper > h3::text').get()
+                item['job_title'] = job.xpath('.//h3/text()').extract_first()
                 item['company'] = 'Roweb'
                 item['country'] = 'Romania'
-                item['city'] = job.css('div.content-wrapper > p::text').get().split()[-1]
+                item['country'] = ''
+                item['city'] = location
+                item['remote'] = 'on-site'
                 item['logo_company'] = 'https://interfoane.ro/wp-content/uploads/2016/11/roweb.jpg'
                 #
                 yield item
