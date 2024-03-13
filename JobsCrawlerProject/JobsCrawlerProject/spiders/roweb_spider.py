@@ -33,7 +33,7 @@ class RowebSpiderSpider(scrapy.Spider):
                 item['job_title'] = job.xpath('.//h3/text()').extract_first()
                 item['company'] = 'Roweb'
                 item['country'] = 'Romania'
-                item['country'] = ''
+                item['county'] = ''
                 item['city'] = location
                 item['remote'] = 'on-site'
                 item['logo_company'] = 'https://interfoane.ro/wp-content/uploads/2016/11/roweb.jpg'
