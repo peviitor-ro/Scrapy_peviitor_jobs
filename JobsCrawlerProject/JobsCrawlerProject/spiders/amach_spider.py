@@ -26,8 +26,7 @@ class AmachSpiderSpider(scrapy.Spider):
             
             # check city
             if 'romania' in city_tag.lower():
-                location = city_tag.split(',')[0].strip()
-                if location.lower() == 'bucharest':
+                if (location := city_tag.split(',')[0].strip()) and location.lower() == 'bucharest':
                     location = 'Bucuresti'
 
                 # get location
