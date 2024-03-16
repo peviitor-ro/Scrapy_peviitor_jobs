@@ -8,7 +8,6 @@
 import scrapy
 from JobsCrawlerProject.items import JobItem
 #
-import uuid
 
 
 class RowebSpiderSpider(scrapy.Spider):
