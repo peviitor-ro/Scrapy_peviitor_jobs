@@ -7,8 +7,6 @@
 #
 import scrapy
 from JobsCrawlerProject.items import JobItem
-#
-import uuid
 
 
 class ScaniaSpiderSpider(scrapy.Spider):
@@ -29,7 +27,9 @@ class ScaniaSpiderSpider(scrapy.Spider):
         if (location := [elem.lower() for elem\
                     in response.xpath('//div[@class="cmp-text"]//p//text()').extract()\
                         if 'locatie' in elem.lower()]):
+            
             locations = [city.strip().title() for city in location[0].split('scania')[1:] if city.strip()]
+            
             # get items with new locations
             item = JobItem()
             item['job_link'] = response.url
