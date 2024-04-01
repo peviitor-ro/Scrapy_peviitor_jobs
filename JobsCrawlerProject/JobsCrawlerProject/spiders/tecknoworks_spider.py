@@ -9,11 +9,7 @@ import scrapy
 from scrapy.http import FormRequest
 from JobsCrawlerProject.items import JobItem
 #
-import uuid
-#
 import json
-import requests
-import re
 
 
 class TecknoworksSpiderSpider(scrapy.Spider):
@@ -22,14 +18,6 @@ class TecknoworksSpiderSpider(scrapy.Spider):
     start_urls = ["https://apply.workable.com/tecknoworks/"]
 
     def start_requests(self):
-
-        session = requests.Session()
-        headers_cookie = session.head('https://apply.workable.com/tecknoworks/',
-                        headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'}).headers
-
-        # search data with regex
-        wmc = re.search(r'wmc=.*?;', str(headers_cookie['set-cookie'])).group(0)
-        cf = re.search(r'__cf', str(headers_cookie['set-cookie'])).group(0)
 
         # prepare data row and headers for post requests
         formdata = {
@@ -42,16 +30,10 @@ class TecknoworksSpiderSpider(scrapy.Spider):
         headers = {
                 'authority': 'apply.workable.com',
                 'accept': 'application/json, text/plain, */*',
-                'accept-language': 'en',
                 'content-type': 'application/json',
-                'cookie': f'{wmc} {cf}',
                 'origin': 'https://apply.workable.com',
                 'referer': 'https://apply.workable.com/tecknoworks/',
-                'sec-fetch-dest': 'empty',
-                'sec-fetch-mode': 'cors',
-                'sec-fetch-site': 'same-origin',
-                'sec-gpc': '1',
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
             }
 
         yield scrapy.Request(
@@ -66,12 +48,13 @@ class TecknoworksSpiderSpider(scrapy.Spider):
 
         for job in response.json()['results']:
             item = JobItem()
-            item['id'] = str(uuid.uuid4())
-            item['job_link'] = f'https://apply.workable.com/tecknoworks/j/{job["shortcode"]}/'
-            item['job_title'] = job['title']
+            item['job_link'] = f'https://apply.workable.com/tecknoworks/j/{job.get("shortcode")}/'
+            item['job_title'] = job.get('title')
             item['company'] = 'Tecknoworks'
             item['country'] = 'Romania'
-            item['city'] = job['location']['city']
+            item['county'] = job.get('location').get('region').split()[0]
+            item['city'] = job.get('location').get('city')
+            item['remote'] = job.get('workplace')
             item['logo_company'] = 'https://workablehr.s3.amazonaws.com/uploads/account/logo/543166/logo'
 
             yield item
