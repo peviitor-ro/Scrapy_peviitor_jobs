@@ -100,7 +100,7 @@ class RscrdsSpider(scrapy.Spider):
             item = JobItem()
             item['job_link'] = f"https://www.digi.ro/{links[idx]}"
             item['job_title'] = titles[idx]
-            item['company'] = 'rscrds'
+            item['company'] = 'RCS-RDS'
             item['country'] = 'Romania'
             item['county'] = location_finish[0] if True in location_finish else None
             item['city'] = 'all' if location.lower() == location_finish[0].lower()\
