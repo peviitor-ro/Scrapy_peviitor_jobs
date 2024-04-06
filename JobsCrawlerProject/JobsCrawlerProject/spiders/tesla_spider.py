@@ -5,6 +5,8 @@
 #
 import scrapy
 from JobsCrawlerProject.items import JobItem
+#
+from JobsCrawlerProject.found_county import get_county
 
 
 class TeslaSpiderSpider(scrapy.Spider):
@@ -56,6 +58,8 @@ class TeslaSpiderSpider(scrapy.Spider):
             for k, v in ids.items():
                 for j in v:
                     if j == job_search.get('l'):
+                        #
+                        location_finish = get_county(location=k)
                     
                         # get items with new locations
                         item = JobItem()
@@ -63,8 +67,10 @@ class TeslaSpiderSpider(scrapy.Spider):
                         item['job_title'] = job_search.get('t')
                         item['company'] = 'Tesla'
                         item['country'] = 'Romania'
-                        item['county'] = ''
-                        item['city'] = k
+                        item['county'] = location_finish[0] if True in location_finish else None
+                        item['city'] = 'all' if k.lower() == location_finish[0].lower()\
+                                            and True in location_finish and 'bucuresti' != k.lower()\
+                                                else k
                         item['remote'] = 'on-site'
                         item['logo_company'] = 'https://i.ebayimg.com/images/g/bfUAAOSw88RbDbfe/s-l1600.jpg'
                         #
