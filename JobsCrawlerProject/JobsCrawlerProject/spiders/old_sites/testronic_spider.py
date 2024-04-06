@@ -7,56 +7,51 @@
 #
 import scrapy
 from JobsCrawlerProject.items import JobItem
+from JobsCrawlerProject.found_county import get_county
 #
-import uuid
 import json
-import re
 #
 import requests
-
 
 class TestronicSpiderSpider(scrapy.Spider):
     name = "testronic_spider"
     allowed_domains = ["apply.workable.com"]
     start_urls = ["https://apply.workable.com/testronic/#jobs"]
 
+    # disable robots.txt for Tesla
+    custom_settings = {
+            'ROBOTSTXT_OBEY': False
+        }
+
     def start_requests(self):
+        yield scrapy.Request(url=self.start_urls[0],
+                             method='HEAD',
+                             callback=self.parse_headers)
+        
+    def parse_headers(self, response):
 
-        # extract fresh cookies every time
-        _cookies = requests.head('https://apply.workable.com/testronic', headers={'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X; ru-UA) AppleWebKit/537.36 (KHTML, like Gecko) Version/11.2.6 Mobile/15D100 Safari/537.36 Puffin/5.2.2IP'}).headers
-
-        # search data with regex
-        wmc = re.search(r'wmc=.*?;', str(_cookies['set-cookie'])).group(0)
-        cf = re.search(r'__cf', str(_cookies['set-cookie'])).group(0)
+        # don't forget split() 
+        wmc, cf_bm = [k.decode('utf-8') for\
+                      k in response.headers.getlist('Set-Cookie')\
+                        if b'wmc' in k or b'cf_bm' in k]
 
         formdata = {
-                 "query": "",
-                 "location": [
-                     {
-                         "country": "Romania",
-                         "region": "Bucharest",
-                         "city": "Bucharest",
-                         "countryCode": "RO"
-                     }
-                 ],
-                 "department": [],
-                 "worktype": [],
-                 "remote": []
-             }
+            'query': '',
+            'location': [],
+            'department': [],
+            'worktype': [],
+            'remote': [],
+            'workplace': [],
+        }
 
         headers = {
                 'authority': 'apply.workable.com',
                 'accept': 'application/json, text/plain, */*',
-                'accept-language': 'en',
                 'content-type': 'application/json',
-                'cookie': f'{wmc} {cf}',
+                'cookie': f'{wmc.split()[0]} {cf_bm.split()[0]}',
                 'origin': 'https://apply.workable.com',
                 'referer': 'https://apply.workable.com/testronic/',
-                'sec-fetch-dest': 'empty',
-                'sec-fetch-mode': 'cors',
-                'sec-fetch-site': 'same-origin',
-                'sec-gpc': '1',
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36''
             }
 
         yield scrapy.Request(
@@ -68,16 +63,17 @@ class TestronicSpiderSpider(scrapy.Spider):
         )
 
     def parse(self, response):
+        print(response)
 
-        # parse jobs here
-        for job in response.json()["results"]:
-            item = JobItem()
-            item['id'] = str(uuid.uuid4())
-            item['job_link'] = f'https://apply.workable.com/testronic/j/{job["shortcode"]}'
-            item['job_title'] = job['title']
-            item['company'] = 'Testronic'
-            item['country'] = 'Romania'
-            item['city'] = job['location']['city']
-            item['logo_company'] = 'https://workablehr.s3.amazonaws.com/uploads/account/logo/585016/logo'
+    #     # parse jobs here
+    #     for job in response.json()["results"]:
+    #         item = JobItem()
+    #         item['id'] = str(uuid.uuid4())
+    #         item['job_link'] = f'https://apply.workable.com/testronic/j/{job["shortcode"]}'
+    #         item['job_title'] = job['title']
+    #         item['company'] = 'Testronic'
+    #         item['country'] = 'Romania'
+    #         item['city'] = job['location']['city']
+    #         item['logo_company'] = 'https://workablehr.s3.amazonaws.com/uploads/account/logo/585016/logo'
 
-            yield item
+    #         yield item
