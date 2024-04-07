@@ -16,9 +16,6 @@ class ValnetincSpiderSpider(scrapy.Spider):
     allowed_domains = ["valnetinc.applytojob.com"]
     start_urls = ["https://valnetinc.applytojob.com/apply"]
 
-    def start_requests(self):
-        yield scrapy.Request("https://valnetinc.applytojob.com/apply")
-
     def parse(self, response):
 
         # data here
