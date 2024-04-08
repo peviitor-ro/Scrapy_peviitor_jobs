@@ -48,7 +48,6 @@ def make_headers(town: str, industry: str) -> tuple[dict, dict]:
     return headers, data
 
 
-
 class RscrdsSpider(scrapy.Spider):
     name = "rscrds"
     allowed_domains = ["www.digi.ro"]

@@ -9,7 +9,9 @@ import subprocess
 
 # exclude files
 exclude = ['__init__.py',
-           'firstlinesoftware_spider.py',]
+           'firstlinesoftware_spider.py',
+           'kassal_spider.py', # test spider
+           ]
 
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JobsCrawlerProject', 'spiders')
 
