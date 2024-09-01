@@ -76,3 +76,5 @@ class UpdateAPI:
         ... update logo on peviitor.ro
         '''
         pass
+
+        # Test add something
