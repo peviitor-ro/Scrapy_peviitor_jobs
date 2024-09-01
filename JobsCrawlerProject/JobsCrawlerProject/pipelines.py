@@ -33,9 +33,9 @@ class UpdateAPIPipeline:
     def close_spider(self, spider):
 
         if self.lst:
-            self.api_updater.update_data(self.lst[0]["company"], self.lst)
-            #
-            self.api_updater.update_logo(self.lst[0]["company"], self.logo_company)
+            self.api_updater.update_jobs(self.lst[0]["company"], self.lst)
 
-        else:
-            self.api_updater.only_clean_data(self.lst[0]["company"])
+        #     self.api_updater.update_logo(self.lst[0]["company"], self.logo_company)
+
+        # else:
+        #     self.api_updater.only_clean_data(self.lst[0]["company"])
