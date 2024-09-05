@@ -1,0 +1,58 @@
+Old yml inside data
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Run Scrapy crawlers
+
+on:
+  #  push:
+  #    branches: [ main ]
+  schedule:
+    - cron: '00 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+        playwright install
+    - name: Scrapy crawlers runs
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+      run: |
+        cd JobsCrawlerProject
+        python3 main_run_crawlers.py
+
+import os
+import subprocess
+
+# exclude files
+exclude = ['__init__.py',
+           '__main_RunnerFile.py',
+           ]
+
+path = os.path.dirname(os.path.abspath(__file__))
+
+for site in os.listdir(path):
+    if site.endswith('.py') and site not in exclude:
+        action = subprocess.run(['python', os.path.join(path, site)], capture_output=True)
+        if action.returncode != 0:
+            errors = action.stderr.decode('utf-8')
+            print("Error in " + site)
+            print(errors)
+        else:
+            print("Success scraping " + site)
