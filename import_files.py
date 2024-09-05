@@ -11,6 +11,7 @@ output_dir = os.path.join('spiders')
 # Create the output directory if it does not exist
 os.makedirs(output_dir, exist_ok=True)
 
+
 def find_spiders_in_directory(directory):
     spider_files = []
 
@@ -20,6 +21,7 @@ def find_spiders_in_directory(directory):
             spider_files.append(file_path)
 
     return spider_files
+
 
 def extract_spider_class_name(file_path):
     with open(file_path, 'r') as file:
@@ -33,11 +35,12 @@ def extract_spider_class_name(file_path):
 
 def generate_script(file_path, spider_class_name):
     module_name = os.path.basename(file_path)[:-3]  # Remove the .py extension
-    script_content = textwrap.dedent(f"""
-import sys
+    script_content = textwrap.dedent(f"""import sys
 import os
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+
+os.environ['SCRAPY_SETTINGS_MODULE'] = 'JobsCrawlerProject.settings'
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.abspath(os.path.join(current_dir, '..', 'JobsCrawlerProject'))
@@ -68,6 +71,7 @@ def main():
             generate_script(file_path, spider_class_name)
         else:
             print(f"No spider class found in {file_path}")
+
 
 if __name__ == "__main__":
     main()

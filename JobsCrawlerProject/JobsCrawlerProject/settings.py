@@ -12,6 +12,10 @@ BOT_NAME = "JobsCrawlerProject"
 SPIDER_MODULES = ["JobsCrawlerProject.spiders"]
 NEWSPIDER_MODULE = "JobsCrawlerProject.spiders"
 
+# LOG_LEVEL = 'DEBUG'  # Poate fi 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+# LOG_FILE = 'scrapy_logs.txt'  # Dacă vrei să salvezi logurile într-un fișier
+# LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+# LOG_DATEFORMAT = '%Y-%m-%d %H:%M:%S'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "JobsCrawlerProject (+http://www.yourdomain.com)"
@@ -65,7 +69,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-#  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 200,
+  'JobsCrawlerProject.pipelines.UpdateAPIPipeline': 1,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -90,7 +94,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
-REQUEST_FINGERPRINTER_IMPLEMENTATION = 'default'
+REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
