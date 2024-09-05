@@ -27,7 +27,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           pip3 install -r requirements.txt
-      - name: All scrapers runs
+      - name: All spiders runs
         env:
           EMAIL: ${{ secrets.EMAIL }}
         run: |
