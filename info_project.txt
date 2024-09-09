@@ -56,3 +56,7 @@ for site in os.listdir(path):
             print(errors)
         else:
             print("Success scraping " + site)
+
+
+######################
+self.crawler.engine.close_spider(self, 'No valid data found') # stop crawler process

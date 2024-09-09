@@ -4,7 +4,6 @@ import subprocess
 # exclude files
 exclude = ['__init__.py',
            '__main_runner_spiders.py',
-           'moveos_spider.py',
            'tesla_spider.py',
            'rscrds_spider.py',
            'globant_spider.py',

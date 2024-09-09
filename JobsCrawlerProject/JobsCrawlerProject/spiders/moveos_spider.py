@@ -13,7 +13,7 @@ from JobsCrawlerProject.found_county import get_county
 
 class MoveosSpiderSpider(scrapy.Spider):
     name = "moveos_spider"
-    allowed_domains = ["www.hr.moveos.ro"]
+    allowed_domains = ["moveos.ro"]
     start_urls = ["https://moveos.ro/locuri-de-munca?start="]
 
     def start_requests(self):
@@ -26,7 +26,7 @@ class MoveosSpiderSpider(scrapy.Spider):
     def parse(self, response):
 
         if len(check_valid_data_from_page := response.xpath('//div[@class="locuri-de-munca"]')) > 0:
-            
+
             for job in check_valid_data_from_page:
                 if job.xpath('.//div[@class="anunt-inactiv"]/p/text()').extract_first() is None:
                     #
@@ -48,7 +48,7 @@ class MoveosSpiderSpider(scrapy.Spider):
                     yield item
                 else:
                     self.crawler.engine.close_spider(self, 'No valid data found')
-        
+
         # stop crawler
         else:
             self.crawler.engine.close_spider(self, 'No valid data found')
