@@ -5,6 +5,8 @@
 # Company -> Bittnet
 # Link ----> https://www.bittnet.jobs/1048/lista-posturi
 #
+from os import stat_result
+from typing_extensions import Text
 import scrapy
 #
 from JobsCrawlerProject.items import JobItem
@@ -22,53 +24,48 @@ class BittnetSpiderSpider(scrapy.Spider):
     allowed_domains = ["www.bittnet.jobs"]
     start_urls = ["https://www.bittnet.jobs/1048/lista-posturi"]
 
-    @classmethod
-    async def parse(cls, response):
-        async with async_playwright() as p:
-            browser = await p.chromium.launch()
-            context = await browser.new_context()
-            page = await context.new_page()
+    def start_requests(self):
+        yield scrapy.Request(
+            url=self.start_urls[0],
+            meta={
+                "playwright": True,
+                "playwright_page_methods": [
+                    {"method": "wait_for_selector", "args": ['div.itemcard']}
+                ],
+                "playwright_page_options": {
+                    "timeout": 5000
+                }
+            }
+        )
 
-            await page.goto(response.url)
-            await page.wait_for_load_state('domcontentloaded')
+    def parse(self, response):
 
-            # wait for selector
-            await page.wait_for_selector('div.itemcard', state='visible')
+        jobs_items_card = response.xpath('//div[@class="itemcard"]')
 
-            dynamic_content = await page.inner_html('body')
+        # extract data from jobs_items_crad: link, title, location
+        for job_item in jobs_items_card:
 
-            await page.close()
-            await context.close()
-            await browser.close()
+            location = job_item.xpath('.//div[@class="row-item"]//text()').extract()
 
-            # scrape all jobs
-            selector = Selector(text=dynamic_content)
+            # if location - en
+            location = location[-1]
+            if location.lower() == 'bucharest':
+                location = 'Bucuresti'
 
-            # here parse jobs
-            for job in selector.xpath('//div[contains(@class, "col-xs-12  col-md-3 col-xl-3")]'):
+            location_finish = get_county(location=location)
 
-                # get location
-                if (location := job.xpath('.//div[@class="row-item"]/text()').extract_first())\
-                    and location is not None:
-                    pass
-                else:
-                    continue
+            if (title := job_item.xpath('.//div[@class="row-item"]/a/text()').get()):
 
-                location_finish = get_county(location=location)
-
-                # get title
-                if (title := job.xpath('.//div[@class="row-item"]/a/text()').get()):
-
-                    item = JobItem()
-                    item['job_link'] = "https://www.bittnet.jobs" + job.xpath('.//div[@class="row-item"]/a/@href').get()
-                    item['job_title'] = title
-                    item['company'] = 'Bittnet'
-                    item['country'] = 'Romania'
-                    item['county'] = location_finish[0] if True in location_finish else None
-                    item['city'] = 'all' if location.lower() == location_finish[0].lower()\
-                                        and True in location_finish and 'bucuresti' != location.lower()\
-                                            else location
-                    item['remote'] = 'on-site'
-                    item['logo_company'] = 'https://www.bittnet.jobs/img/logo_ro.png'
-                    #
-                    yield item
+                item = JobItem()
+                item['job_link'] = "https://www.bittnet.jobs" + job_item.xpath('.//div[@class="row-item"]/a/@href').get()
+                item['job_title'] = title
+                item['company'] = 'Bittnet'
+                item['country'] = 'Romania'
+                item['county'] = location_finish[0] if True in location_finish else None
+                item['city'] = 'all' if location.lower() == location_finish[0].lower()\
+                                    and True in location_finish and 'bucuresti' != location.lower()\
+                                        else location
+                item['remote'] = 'on-site'
+                item['logo_company'] = 'https://www.bittnet.jobs/img/logo_ro.png'
+                #
+                yield item
