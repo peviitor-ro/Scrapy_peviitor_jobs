@@ -59,7 +59,7 @@ class UpdateAPI:
         }
 
         res = requests.request("POST", "https://api.laurentiumarian.ro/jobs/add/", headers=post_header, data=json.dumps(data_jobs))
-        print('------------------------------------> ', res)
+        print(json.dumps(data_jobs, indent=4))
 
     def update_jobs(self, company_name: str, data_jobs: list):
         '''
