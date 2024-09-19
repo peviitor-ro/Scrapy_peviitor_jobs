@@ -1,3 +1,10 @@
+#
+#
+#
+#
+# Company -> Google
+# Link ----> https://www.google.com/about/careers/applications/jobs/results/?distance=50&has_remote=false&hl=en_US&jlo=en_US&location=Romania&q=
+#
 import scrapy
 from JobsCrawlerProject.items import JobItem
 from JobsCrawlerProject.found_county import get_county
