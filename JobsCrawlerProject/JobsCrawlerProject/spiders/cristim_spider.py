@@ -19,7 +19,7 @@ class CristimSpiderSpider(CrawlSpider):
 
     rules = (
             Rule(LinkExtractor(allow=('/cariere/',), deny=('/apply',)),
-                 callback='parse_job'),
+                callback='parse_job'),
             )
 
     def parse_job(self, response):
@@ -30,7 +30,7 @@ class CristimSpiderSpider(CrawlSpider):
             location = location[0]
         else:
             location = 'all'
-        
+
         # get location
         location_finish = get_county(location=location)
 

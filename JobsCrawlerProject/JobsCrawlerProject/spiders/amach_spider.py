@@ -15,15 +15,11 @@ class AmachSpiderSpider(scrapy.Spider):
     allowed_domains = ["amach.software", "boards.eu.greenhouse.io"]
     start_urls = ["https://boards.eu.greenhouse.io/embed/job_board/?for=amach"]
 
-    def start_requests(self):
-        request = scrapy.Request(self.start_urls[0])
-        yield request
-
     def parse(self, response):
         # data here
         for job in response.xpath('//div[@class="opening"]'):
             city_tag = job.xpath('.//span[@class="location"]/text()').get()
-            
+
             # check city
             if 'romania' in city_tag.lower():
                 if (location := city_tag.split(',')[0].strip()) and location.lower() == 'bucharest':

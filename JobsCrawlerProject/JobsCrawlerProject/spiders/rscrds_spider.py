@@ -14,7 +14,6 @@ from JobsCrawlerProject.found_county import get_county
 #
 from urllib.parse import urlencode
 import re
-
 from time import sleep
 
 
@@ -24,7 +23,7 @@ def make_headers(town: str, industry: str) -> tuple[dict, dict]:
 
         params: Town: str, for search jobs in each town.
                 Industry: Exact title job.
-        
+
         return: headers - dict
                 payload - dict
     '''
@@ -56,9 +55,9 @@ class RscrdsSpider(scrapy.Spider):
     def start_requests(self):
         yield scrapy.Request(url='https://www.digi.ro/cariere',
                                     callback=self.parse_towns)
-    
+
     def parse_towns(self, response):
-        
+
         # get all counties
         for city_ro in response.xpath('//select[@id="form-assistance-support-careers-county"]//option'):
             if (location := city_ro.xpath('.//text()').extract_first()) and location.lower() == 'judet':
@@ -94,8 +93,8 @@ class RscrdsSpider(scrapy.Spider):
             #
             location = response.meta.get('location')
             location_finish = get_county(location=location)
-            
-            # send data to Pipelines 
+
+            # send data to Pipelines
             item = JobItem()
             item['job_link'] = f"https://www.digi.ro/{links[idx]}"
             item['job_title'] = titles[idx]
