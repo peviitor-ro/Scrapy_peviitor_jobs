@@ -1,7 +1,7 @@
 #
 #
 #
-#
+# For git add .
 import scrapy
 from JobsCrawlerProject.items import JobItem
 
