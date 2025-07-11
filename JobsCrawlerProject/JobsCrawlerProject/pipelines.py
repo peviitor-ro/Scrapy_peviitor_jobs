@@ -29,6 +29,8 @@ class UpdateAPIPipeline:
         return item
 
     def close_spider(self, spider):
+
+        # print(len(self.lst))
         if self.lst:
             company = self.lst[0]["company"] if self.lst else "unknown"
             self.api_updater.update_jobs(company, self.lst)
