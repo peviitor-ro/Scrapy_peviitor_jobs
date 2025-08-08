@@ -54,9 +54,9 @@ class EpamSpider(scrapy.Spider):
                 remote = None
                 remote_brut = job.get('remote')
                 if remote_brut == False:
-                    remote = "On-site"
+                    remote = "on-site"
                 else:
-                    remote = 'Remote'
+                    remote = 'remote'
 
                 item = JobItem()
                 item['job_link'] = job.get('url')
