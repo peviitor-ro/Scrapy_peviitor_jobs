@@ -46,7 +46,8 @@ class UpdateAPI:
         'User-Agent': UA.random,
         }
 
-        self.access_token = requests.request("POST", "https://api.peviitor.ro/v5/get_token/", headers=post_header, data=payload).json()['access']
+        self.access_token = requests.request(
+            "POST", "https://api.laurentiumarian.ro/get_token", headers=post_header, data=payload).json()['access']
         print(self.access_token)
 
 
