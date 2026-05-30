@@ -14,5 +14,5 @@ class JobItem(Item):
     country:        str                 = Field()
     county:         Union[str, list]    = Field()
     city:           Union[str, list]    = Field()
-    remote:         str                 = Field()
+    remote:         Union[str, list]    = Field()
     logo_company:   str                 = Field()
